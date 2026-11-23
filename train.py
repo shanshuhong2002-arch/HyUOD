@@ -12,6 +12,7 @@ if __name__ == "__main__":
     # Parse the arguments
     args = parser.parse_args()
 
+
     print(f"Loading model from: {args.model_yaml}")
     # Build a new model from the provided YAML path
     model = YOLO(args.model_yaml)
@@ -20,14 +21,15 @@ if __name__ == "__main__":
     # Train the model using the parsed data path and your fixed parameters
     results = model.train(
         data=args.data_yaml,
-        project="",
-        epochs=400,
+        project="/home/admin1/EXP/runs/detect",
+        epochs=80,
         batch=16,
         optimizer='SGD',
         pretrained=False,
         imgsz=640,
-        # workers=12,
-        iou=0.4
+        workers=8,
+        iou=0.4,
+        cache=False,
     )
 
 # # Load a model
