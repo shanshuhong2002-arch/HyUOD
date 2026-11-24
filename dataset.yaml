@@ -1,0 +1,12 @@
+path: /home/admin1/EXP/IMAGES
+train: images/train
+train_t: t/train
+train_a: a/train
+val: images/test
+test: images/test
+nc: 4
+names:
+  0: holothurian
+  1: echinus
+  2: scallop
+  3: starfish

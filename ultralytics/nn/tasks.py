@@ -67,6 +67,7 @@ from ultralytics.nn.modules import (
     t_head,
     A_head,
     frequent_block,
+    TransmissionGatedFusion,
     First_Conv,
     t_block,
     A_block,
@@ -1215,6 +1216,10 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             args = [ch[f]]
         elif m is Concat:
             c2 = sum(ch[x] for x in f)
+        elif m is TransmissionGatedFusion:
+            input_channels = [ch[x] for x in f]
+            c2 = sum(input_channels[:2])
+            args = [input_channels, *args]
         elif m in frozenset({Detect, WorldDetect, Segment, Pose, OBB, ImagePoolingAttn, v10Detect}):
             args.append([ch[x] for x in f])
             if m is Segment:

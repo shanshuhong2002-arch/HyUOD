@@ -69,4 +69,9 @@ head:
   - [[-1, 29], 1, Concat, [1]] # cat head P5
   - [-1, 2, C3k2, [1024, True]] # 41 (P5/32-large)
 
-  - [[35, 38, 41], 1, Detect, [nc]] # Detect(P3, P4, P5)
+ # P2 branch: fuse the P3 neck output with the stride-4 HyUOD features.
+  - [ 35, 1, nn.Upsample, [ None, 2, "nearest" ] ] # 42
+  - [ [ -1, 9 ], 1, Concat, [ 1 ] ] # 43
+  - [ -1, 1, C3k2, [ 256, False, 0.25 ] ] # 44 (P2/4-small)
+
+  - [ [ 44, 35, 38, 41 ], 1, Detect, [ nc ] ] # Detect(P2, P3, P4, P5)

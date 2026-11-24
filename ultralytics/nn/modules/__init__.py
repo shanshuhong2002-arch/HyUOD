@@ -64,6 +64,7 @@ from .block import (
     t_block,
     A_block,
     frequent_block,
+    TransmissionGatedFusion,
     C3k2_wcpm,
 )
 from .conv import (
@@ -177,5 +178,6 @@ __all__ = (
     "A_block",
     "First_Conv",
     "frequent_block",
+    "TransmissionGatedFusion",
     "C3k2_wcpm",
 )

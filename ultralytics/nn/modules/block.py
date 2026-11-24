@@ -59,6 +59,7 @@ __all__ = (
     "t_block",
     "A_block",
     "frequent_block",
+    "TransmissionGatedFusion",
     "C3k2_wcpm",
 )
 
@@ -2074,6 +2075,29 @@ class frequent_block(nn.Module):
         y.extend([self.m[2](self.m[1](y[-1]))])
         y.extend([self.m[3]([y[-1],t])])
         return self.cv2(torch.cat(y, 1))
+
+class TransmissionGatedFusion(nn.Module):
+    """Gate shallow detail using aligned semantic and transmission features."""
+
+    def __init__(self, channels, use_transmission=True):
+        super().__init__()
+        semantic_channels, detail_channels, transmission_channels = channels
+        self.use_transmission = use_transmission
+        self.gate = nn.Sequential(
+            nn.Conv2d(semantic_channels + detail_channels + transmission_channels, 16, 1),
+            nn.SiLU(),
+            nn.Conv2d(16, 1, 1),
+        )
+        nn.init.zeros_(self.gate[-1].weight)
+        nn.init.zeros_(self.gate[-1].bias)
+
+    def forward(self, features):
+        semantic, detail, transmission = features
+        if not self.use_transmission:
+            transmission = torch.zeros_like(transmission)
+        gate = 2 * self.gate(torch.cat((semantic, detail, transmission), dim=1)).sigmoid()
+        return torch.cat((semantic, detail * gate), dim=1)
+
     
 class DynamicConv(nn.Module):
     def __init__(self,in_planes,out_planes,kernel_size,stride,padding=0,dilation=1,grounps=1,bias=True,K=4,temprature=30,ratio=2,init_weight=True):
